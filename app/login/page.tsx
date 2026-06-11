@@ -119,106 +119,99 @@ export default function LoginPage() {
       </div>
 
       <style dangerouslySetInnerHTML={{ __html: `
-        /* Premium Scoped Styling for Login Page */
+        /* Premium Scoped X.com-Inspired Styling for Login Page */
         .login-container {
           position: fixed;
           top: 0;
           left: 0;
           width: 100vw;
           height: 100vh;
-          background: #0f172a; /* Rich Slate 900 background */
+          background: #000000; /* Pure black backdrop like X.com */
           display: flex;
           align-items: center;
           justify-content: center;
           overflow: hidden;
-          font-family: 'Outfit', sans-serif;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
           z-index: 99999;
         }
 
-        /* Ambient Glowing Backdrops */
+        /* Ambient Glowing Backdrops (Subtle deep glow) */
         .glow-circle {
           position: absolute;
-          width: 400px;
-          height: 400px;
+          width: 500px;
+          height: 500px;
           border-radius: 50%;
-          filter: blur(120px);
-          opacity: 0.15;
+          filter: blur(140px);
+          opacity: 0.08;
           z-index: 1;
         }
         .gc-1 {
-          background: #d97706; /* Amber/Orange */
-          top: 10%;
-          left: 15%;
-          animation: floatGlow 15s infinite alternate ease-in-out;
+          background: #1d9bf0; /* X Blue */
+          top: 5%;
+          left: 10%;
+          animation: floatGlow 20s infinite alternate ease-in-out;
         }
         .gc-2 {
-          background: #f59e0b; /* Bright Yellow-Amber */
-          bottom: 10%;
-          right: 15%;
-          animation: floatGlow 18s infinite alternate-reverse ease-in-out;
+          background: #f59e0b; /* Amber */
+          bottom: 5%;
+          right: 10%;
+          animation: floatGlow 25s infinite alternate-reverse ease-in-out;
         }
 
         @keyframes floatGlow {
           0% { transform: translate(0, 0) scale(1); }
-          100% { transform: translate(40px, 40px) scale(1.1); }
+          100% { transform: translate(30px, 30px) scale(1.05); }
         }
 
-        /* Glassmorphic Login Card */
+        /* X-Style Clean Login Card */
         .login-card {
           width: 100%;
-          max-width: 440px;
+          max-width: 420px;
           padding: 40px;
-          background: rgba(30, 41, 59, 0.7); /* Dark semi-transparent Slate */
-          border: 1px solid rgba(255, 255, 255, 0.08);
-          border-radius: 20px;
-          backdrop-filter: blur(20px);
-          -webkit-backdrop-filter: blur(20px);
-          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05);
-          text-align: center;
+          background: #000000;
+          border-radius: 16px;
+          text-align: left; /* Left align text to match X */
           z-index: 10;
-          color: #f8fafc;
-          animation: slideUp 0.5s ease-out;
+          color: #e7e9ea;
+          animation: fadeIn 0.4s ease-out;
         }
 
-        @keyframes slideUp {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
+        @keyframes fadeIn {
+          from { opacity: 0; transform: scale(0.98); }
+          to { opacity: 1; transform: scale(1); }
         }
 
-        /* Brand Logo styling matching TopNav */
+        /* Brand Logo styled to match top branding */
         .brand-logo {
           display: inline-flex;
           align-items: center;
           gap: 8px;
-          background: rgba(217, 119, 6, 0.15); /* Tint of amber */
           color: #f59e0b;
-          border: 1px solid rgba(217, 119, 6, 0.3);
-          border-radius: 12px;
-          padding: 8px 16px;
-          font-family: 'Syne', sans-serif;
-          font-weight: 700;
-          font-size: 14px;
+          font-weight: 800;
+          font-size: 20px;
           letter-spacing: 0.05em;
-          margin-bottom: 24px;
+          margin-bottom: 28px;
         }
 
         .brand-logo i {
-          font-size: 16px;
+          font-size: 24px;
         }
 
+        /* X Headline: 31px bold */
         .login-card h2 {
-          font-family: 'Syne', sans-serif;
-          font-size: 26px;
-          font-weight: 700;
-          margin-bottom: 8px;
-          letter-spacing: -0.02em;
+          font-size: 31px;
+          font-weight: 800;
+          margin-bottom: 12px;
+          letter-spacing: -0.03em;
+          color: #f7f9f9;
+          line-height: 36px;
         }
 
         .subtitle {
-          color: #94a3b8;
-          font-size: 14px;
+          color: #71767b; /* X secondary text color */
+          font-size: 15px;
           margin-bottom: 30px;
-          line-height: 1.5;
+          line-height: 20px;
         }
 
         /* Error Alert Banner */
@@ -226,32 +219,30 @@ export default function LoginPage() {
           display: flex;
           align-items: center;
           gap: 10px;
-          background: rgba(239, 68, 68, 0.15);
-          border: 1px solid rgba(239, 68, 68, 0.3);
-          border-radius: 10px;
+          background: rgba(244, 33, 46, 0.1); /* X red color */
+          border: 1px solid rgba(244, 33, 46, 0.2);
+          border-radius: 12px;
           padding: 12px 16px;
-          color: #f87171;
-          font-size: 13px;
-          text-align: left;
+          color: #f4212e;
+          font-size: 14px;
           margin-bottom: 24px;
         }
 
         .error-alert i {
-          font-size: 16px;
+          font-size: 18px;
           flex-shrink: 0;
         }
 
         /* Form Inputs style */
         .input-group {
-          margin-bottom: 20px;
-          text-align: left;
+          margin-bottom: 24px;
         }
 
         .input-group label {
           display: block;
           font-size: 13px;
-          color: #94a3b8;
-          margin-bottom: 8px;
+          color: #71767b;
+          margin-bottom: 6px;
           font-weight: 500;
         }
 
@@ -263,66 +254,68 @@ export default function LoginPage() {
 
         .input-wrapper i {
           position: absolute;
-          left: 14px;
-          color: #64748b;
-          font-size: 16px;
+          left: 16px;
+          color: #71767b;
+          font-size: 18px;
           pointer-events: none;
-          transition: color 0.3s;
+          transition: color 0.2s;
         }
 
+        /* Input height set to X standard (56px) */
         .input-wrapper input {
           width: 100%;
-          padding: 12px 16px 12px 42px;
-          background: rgba(15, 23, 42, 0.6);
-          border: 1px solid rgba(255, 255, 255, 0.1);
-          border-radius: 12px;
-          color: #f8fafc;
-          font-size: 14px;
+          height: 56px;
+          padding: 12px 16px 12px 48px;
+          background: #000000;
+          border: 1px solid #2f3336; /* X border color */
+          border-radius: 4px; /* X input border-radius */
+          color: #e7e9ea;
+          font-size: 16px;
           outline: none;
-          transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+          transition: border-color 0.2s, box-shadow 0.2s;
         }
 
+        /* X Signature blue outline on focus */
         .input-wrapper input:focus {
-          border-color: #f59e0b;
-          box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
-          background: rgba(15, 23, 42, 0.8);
+          border-color: #1d9bf0;
+          box-shadow: 0 0 0 1px #1d9bf0;
         }
 
         .input-wrapper input:focus + i {
-          color: #f59e0b;
+          color: #1d9bf0;
         }
 
-        /* Premium Accent Login Button */
+        /* Primary Action Button: Pill Shape, bold text, high contrast */
         .login-btn {
           width: 100%;
-          padding: 13px;
-          background: linear-gradient(135deg, #f59e0b, #d97706);
+          height: 40px; /* X standard button height */
+          background-color: #eff3f4; /* High-contrast white */
           border: none;
-          border-radius: 12px;
-          color: #0f172a;
-          font-size: 15px;
-          font-weight: 600;
+          border-radius: 9999px; /* Pill Shape */
+          color: #0f1419; /* High-contrast black text */
+          font-size: 15px; /* X button font size */
+          font-weight: 700; /* Bold font weight */
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
           gap: 8px;
-          margin-top: 28px;
-          transition: transform 0.2s, box-shadow 0.3s, background 0.3s;
-          box-shadow: 0 4px 12px rgba(217, 119, 6, 0.25);
+          margin-top: 32px;
+          transition: background-color 0.2s, box-shadow 0.2s;
         }
 
         .login-btn:hover {
-          transform: translateY(-1px);
-          box-shadow: 0 6px 16px rgba(217, 119, 6, 0.35);
+          background-color: #d7dbdc; /* Light grey hover */
         }
 
         .login-btn:active {
-          transform: translateY(1px);
+          transform: scale(0.99);
         }
 
         .login-btn:disabled {
-          opacity: 0.7;
+          background-color: #787a7a;
+          color: #0f1419;
+          opacity: 0.6;
           cursor: not-allowed;
           transform: none;
         }
@@ -330,8 +323,8 @@ export default function LoginPage() {
         .spinner {
           width: 16px;
           height: 16px;
-          border: 2.5px solid rgba(15, 23, 42, 0.2);
-          border-top: 2.5px solid #0f172a;
+          border: 2px solid rgba(15, 20, 25, 0.25);
+          border-top: 2px solid #0f1419;
           border-radius: 50%;
           animation: spin 0.8s linear infinite;
         }
@@ -346,13 +339,14 @@ export default function LoginPage() {
           align-items: center;
           justify-content: center;
           gap: 6px;
-          margin-top: 32px;
-          font-size: 11px;
-          color: #64748b;
+          margin-top: 36px;
+          font-size: 13px;
+          color: #71767b;
+          text-align: center;
         }
 
         .footer-notes i {
-          font-size: 13px;
+          font-size: 15px;
         }
       `}} />
     </div>

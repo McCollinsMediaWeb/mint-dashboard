@@ -60,11 +60,11 @@ body{font-family:'Syne',sans-serif;background:var(--bg);color:var(--t1);font-siz
 .screen.active{display:block}
 
 /* BUTTONS */
-.btn{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:6px 12px;border:1px solid var(--b2);border-radius:var(--rsm);cursor:pointer;background:var(--s3);color:var(--t1);font-family:'Syne',sans-serif;transition:all .15s;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:6px 16px;border:1px solid var(--b2);border-radius:9999px;cursor:pointer;background:var(--s3);color:var(--t1);font-family:'Syne',sans-serif;font-weight:700;transition:all .15s;white-space:nowrap}
 .btn:hover{background:var(--s2);border-color:var(--b3)}
 .btn:active{transform:scale(.97)}
 .btn i{font-size:13px}
-.btn.amber{background:var(--amber);color:#000;border-color:var(--amber);font-weight:600}
+.btn.amber{background:var(--amber);color:#000;border-color:var(--amber);font-weight:700}
 .btn.amber:hover{background:#fbb847}
 .btn.g-amber{background:var(--ad);color:var(--amber);border-color:var(--amber)}
 .btn.g-amber:hover{background:var(--ad2)}
