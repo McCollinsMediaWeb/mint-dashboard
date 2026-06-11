@@ -106,6 +106,29 @@ export default function AllOrdersScreen({
     setActiveTab("schedule");
   };
 
+  const handleDeleteOrder = (jobId: string) => {
+    const job = jobs.find(x => x._id === jobId);
+    if (!job) return;
+
+    if (confirm(`Delete order ${job.order_no || "unnamed"} permanently?`)) {
+      let updated = jobs.filter(x => x._id !== jobId && x._portionOf !== jobId);
+      
+      // Clean up linked order references
+      if (job.order_no) {
+        updated = updated.map(x => {
+          if (x.linked_order === job.order_no) {
+            return { ...x, linked_order: undefined };
+          }
+          return x;
+        });
+      }
+
+      // Repack date to update route allocations and travel times
+      updated = packDate(updated, teams, trucks, drivers, crew, defaults.buf, fuelConfig, job.date);
+      onUpdateJobs(updated);
+    }
+  };
+
   return (
     <div id="scr-orders" className="screen active">
       <div className="ord-bar">
@@ -205,6 +228,7 @@ export default function AllOrdersScreen({
                         <th>Size</th>
                         <th>Team</th>
                         <th>Status</th>
+                        <th style={{ width: "60px", textAlign: "center" }}>Actions</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -328,6 +352,15 @@ export default function AllOrdersScreen({
                             <td>
                               {stCell}
                               {ctrl}
+                            </td>
+                            <td style={{ textAlign: "center" }}>
+                              <button
+                                className="icon-btn danger"
+                                onClick={() => handleDeleteOrder(j._id)}
+                                title="Delete order permanently"
+                              >
+                                <i className="ti ti-trash"></i>
+                              </button>
                             </td>
                           </tr>
                         );
