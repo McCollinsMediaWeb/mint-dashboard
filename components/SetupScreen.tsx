@@ -743,7 +743,7 @@ export default function SetupScreen({
 
       {/* DRIVERS SECTION */}
       {activeSubTab === "drivers" && (
-        <div id="sec-drivers" className="tm-section">
+        <div id="sec-drivers" className="tm-section active">
           <div className="tm-top">
             <h2>In-house drivers</h2>
             <button className="btn" onClick={() => setDriverFormOpen(!driverFormOpen)}>
@@ -901,7 +901,7 @@ export default function SetupScreen({
 
       {/* CREW SECTION */}
       {activeSubTab === "crew" && (
-        <div id="sec-crew" className="tm-section">
+        <div id="sec-crew" className="tm-section active">
           <div className="tm-top">
             <h2>In-house crew</h2>
             <button className="btn" onClick={() => setCrewFormOpen(!crewFormOpen)}>
@@ -1059,7 +1059,7 @@ export default function SetupScreen({
 
       {/* TRUCKS SECTION */}
       {activeSubTab === "trucks" && (
-        <div id="sec-trucks" className="tm-section">
+        <div id="sec-trucks" className="tm-section active">
           <div className="tm-top">
             <h2>In-house trucks</h2>
             <button className="btn" onClick={() => setTruckFormOpen(!truckFormOpen)}>
@@ -1245,7 +1245,7 @@ export default function SetupScreen({
 
       {/* OUTSOURCE SECTION */}
       {activeSubTab === "outsource" && (
-        <div id="sec-outsource" className="tm-section">
+        <div id="sec-outsource" className="tm-section active">
           <p style={{ fontSize: "12px", color: "var(--t2)", marginBottom: "16px" }}>
             Third-party drivers, crew &amp; trucks. They appear in team slots tagged <span className="bdg b-split">OUT</span> and can be assigned just like in-house resources.
           </p>
@@ -1487,7 +1487,7 @@ export default function SetupScreen({
 
       {/* VENUES SECTION */}
       {activeSubTab === "venues" && (
-        <div id="sec-venues" className="tm-section">
+        <div id="sec-venues" className="tm-section active">
           <div className="tm-top">
             <h2>Venue types &amp; default setup times</h2>
             <button className="btn" onClick={() => setVenueFormOpen(!venueFormOpen)}>
