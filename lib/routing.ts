@@ -1,6 +1,27 @@
 import { ZPAT, TM } from "./constants";
 import { FuelConfig } from "./types";
 
+let distanceCache: Record<string, { km: number; mins: number }> = {};
+
+export function setDistanceCache(cache: Record<string, { km: number; mins: number }> | null | undefined) {
+  if (cache) {
+    distanceCache = cache;
+  }
+}
+
+export function normalizeAddress(addr: string | null | undefined): string {
+  if (!addr) return '';
+  const s = addr.trim().toLowerCase();
+  if (s === 'dic' || s === 'warehouse' || s.includes('dubai investment park') || s.includes('dip')) {
+    return 'warehouse';
+  }
+  return s;
+}
+
+export function getDistanceKey(a1: string, a2: string): string {
+  return `${normalizeAddress(a1)}||${normalizeAddress(a2)}`;
+}
+
 export function dz(a: string | null | undefined): string {
   if (!a) return 'downtown';
   const s = a.toLowerCase();
@@ -18,10 +39,18 @@ export function zmins(z1: string, z2: string): number {
 }
 
 export function tmins(a1: string, a2: string): number {
+  const key = getDistanceKey(a1, a2);
+  if (distanceCache[key]) {
+    return distanceCache[key].mins;
+  }
   return zmins(dz(a1), dz(a2));
 }
 
 export function hubMins(addr: string): number {
+  const key = getDistanceKey('warehouse', addr);
+  if (distanceCache[key]) {
+    return distanceCache[key].mins;
+  }
   return zmins('dic', dz(addr));
 }
 
@@ -42,6 +71,10 @@ export function kmz(z1: string, z2: string): number {
 }
 
 export function kmAddr(a1: string, a2: string): number {
+  const key = getDistanceKey(a1, a2);
+  if (distanceCache[key]) {
+    return distanceCache[key].km;
+  }
   return kmz(dz(a1), dz(a2));
 }
 
@@ -56,6 +89,10 @@ export function fuelPerKm(fuelConfig: FuelConfig | null | undefined): number {
 }
 
 export function hubKm(addr: string): number {
+  const key = getDistanceKey('warehouse', addr);
+  if (distanceCache[key]) {
+    return distanceCache[key].km;
+  }
   return kmz('dic', dz(addr));
 }
 

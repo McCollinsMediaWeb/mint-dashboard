@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
-import { buildFleet, todayStr } from "@/lib/utils";
-import { AppStateData } from "@/lib/types";
+import { buildFleet, todayStr, twS, teamCap } from "@/lib/utils";
+import { AppStateData, Job, Team, Truck } from "@/lib/types";
+import { getDistanceKey } from "@/lib/routing";
+import { fetchGoogleDistance } from "@/lib/google-maps";
+import { computeRuns } from "@/lib/optimizer";
 
 const getDefaultState = (): AppStateData => {
   const fleet = buildFleet();
@@ -35,9 +38,70 @@ const getDefaultState = (): AppStateData => {
       venue: true,
       items: true,
       notes: true
-    }
+    },
+    distances: {}
   };
 };
+
+function extractAllRequiredPairs(payload: AppStateData): { origin: string; dest: string }[] {
+  const pairs: { origin: string; dest: string }[] = [];
+  const uniquePairs = new Set<string>();
+
+  const addPair = (origin: string, dest: string) => {
+    if (!origin || !dest) return;
+    const key = `${origin.trim().toLowerCase()}||${dest.trim().toLowerCase()}`;
+    if (!uniquePairs.has(key)) {
+      uniquePairs.add(key);
+      pairs.push({ origin, dest });
+    }
+  };
+
+  const activeJobs = (payload.jobs || []).filter(j => j.status !== 'cancelled' && j.address);
+
+  // 1. Warehouse to every job address and vice-versa
+  activeJobs.forEach(j => {
+    addPair('warehouse', j.address);
+    addPair(j.address, 'warehouse');
+  });
+
+  // 2. Sequential transitions for scheduled runs
+  const jobsByDate: Record<string, Job[]> = {};
+  activeJobs.forEach(j => {
+    if (j.team_id) {
+      if (!jobsByDate[j.date]) jobsByDate[j.date] = [];
+      jobsByDate[j.date].push(j);
+    }
+  });
+
+  for (const [ds, dateJobs] of Object.entries(jobsByDate)) {
+    for (const team of (payload.teams || [])) {
+      const teamJobs = dateJobs.filter(j => j.team_id === team.id);
+      if (!teamJobs.length) continue;
+
+      // Sort by time window
+      teamJobs.sort((a, b) => (twS(a.time_window) ?? 9999) - (twS(b.time_window) ?? 9999));
+
+      const trucks = payload.trucks || [];
+      const _ovr = [...new Set(teamJobs.map(j => (j as any).truckOverride).filter(Boolean))];
+      const _effTruck = _ovr.length === 1 ? trucks.find(t => t.id === _ovr[0]) : trucks.find(t => t.id === team.truckId);
+      const cap = _ovr.length ? teamCap({ truckId: _effTruck?.id } as Team, trucks) : teamCap(team, trucks);
+
+      try {
+        const runs = computeRuns(teamJobs, cap);
+        runs.forEach(run => {
+          const rj = run.jobs || [];
+          for (let i = 1; i < rj.length; i++) {
+            addPair(rj[i - 1].address, rj[i].address);
+          }
+        });
+      } catch (err) {
+        console.error("Error computing runs for pre-fetching:", err);
+      }
+    }
+  }
+
+  return pairs;
+}
 
 export async function GET() {
   try {
@@ -72,6 +136,41 @@ export async function POST(request: Request) {
 
     // Update the timestamp
     payload.savedAt = new Date().toISOString();
+
+    // Ensure payload.distances exists
+    if (!payload.distances) {
+      payload.distances = {};
+    }
+
+    // Extract all required origin/destination pairs
+    const requiredPairs = extractAllRequiredPairs(payload);
+    
+    // Find missing pairs not already in cache
+    const missingPairs = requiredPairs.filter(p => {
+      const key = getDistanceKey(p.origin, p.dest);
+      return !payload.distances[key];
+    });
+
+    if (missingPairs.length > 0) {
+      console.log(`[Google Maps] Fetching ${missingPairs.length} missing distance pairs...`);
+      try {
+        const results = await Promise.all(
+          missingPairs.map(async (p) => {
+            const res = await fetchGoogleDistance(p.origin, p.dest);
+            return { pair: p, res };
+          })
+        );
+
+        results.forEach(({ pair, res }) => {
+          if (res) {
+            const key = getDistanceKey(pair.origin, pair.dest);
+            payload.distances[key] = res;
+          }
+        });
+      } catch (err) {
+        console.error("Failed to fetch batch distances from Google Maps:", err);
+      }
+    }
 
     const state = await prisma.appState.upsert({
       where: { id: 1 },

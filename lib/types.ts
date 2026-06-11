@@ -149,4 +149,5 @@ export interface AppStateData {
   fuel: FuelConfig;
   crewRate: number;
   show: ShowPreferences;
+  distances?: Record<string, { km: number; mins: number }>;
 }

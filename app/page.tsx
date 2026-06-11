@@ -10,6 +10,7 @@ import SetupScreen from "@/components/SetupScreen";
 import PrintSheet from "@/components/PrintSheet";
 import OrderModal from "@/components/OrderModal";
 import { packDate } from "@/lib/optimizer";
+import { setDistanceCache } from "@/lib/routing";
 
 interface SavedHistoryState {
   jobs: Job[];
@@ -22,6 +23,7 @@ interface SavedHistoryState {
   fuelConfig: FuelConfig;
   crewRate: number;
   showPrefs: ShowPreferences;
+  distances: Record<string, { km: number; mins: number }>;
 }
 
 const cleanJob = (j: Job): any => {
@@ -56,6 +58,7 @@ export default function Page() {
     items: true,
     notes: true
   });
+  const [distances, setDistances] = useState<Record<string, { km: number; mins: number }>>({});
 
   // Modal State
   const [activeJobId, setActiveJobId] = useState<string | null>(null);
@@ -77,6 +80,11 @@ export default function Page() {
     } catch (e) {}
   }, []);
 
+  // Sync routing distance cache
+  useEffect(() => {
+    setDistanceCache(distances);
+  }, [distances]);
+
   // Fetch initial state
   useEffect(() => {
     const fetchInitialState = async () => {
@@ -97,6 +105,7 @@ export default function Page() {
           setFuelConfig(data.fuel || { dieselAED: 4.33, lPer100: 20 });
           setCrewRate(data.crewRate ?? 150);
           setShowPrefs(data.show || { orderNo: true, phone: true, venue: true, items: true, notes: true });
+          setDistances(data.distances || {});
           if (data.selDate) setSelDate(data.selDate);
 
           lastSyncRef.current = data.savedAt;
@@ -126,6 +135,7 @@ export default function Page() {
               setFuelConfig(localData.fuel || { dieselAED: 4.33, lPer100: 20 });
               setCrewRate(localData.crewRate ?? 150);
               setShowPrefs(localData.show || { orderNo: true, phone: true, venue: true, items: true, notes: true });
+              setDistances(localData.distances || {});
               if (localData.selDate) setSelDate(localData.selDate);
               setTimeout(() => {
                 applyingRemoteRef.current = false;
@@ -155,6 +165,7 @@ export default function Page() {
             setFuelConfig(localData.fuel || { dieselAED: 4.33, lPer100: 20 });
             setCrewRate(localData.crewRate ?? 150);
             setShowPrefs(localData.show || { orderNo: true, phone: true, venue: true, items: true, notes: true });
+            setDistances(localData.distances || {});
             if (localData.selDate) setSelDate(localData.selDate);
             setTimeout(() => {
               applyingRemoteRef.current = false;
@@ -188,6 +199,7 @@ export default function Page() {
           setFuelConfig(data.fuel || { dieselAED: 4.33, lPer100: 20 });
           setCrewRate(data.crewRate ?? 150);
           setShowPrefs(data.show || { orderNo: true, phone: true, venue: true, items: true, notes: true });
+          setDistances(data.distances || {});
 
           lastSyncRef.current = data.savedAt;
 
@@ -234,7 +246,8 @@ export default function Page() {
           def: defaults,
           fuel: fuelConfig,
           crewRate,
-          show: showPrefs
+          show: showPrefs,
+          distances
         };
 
         // Offline storage backup
@@ -250,6 +263,7 @@ export default function Page() {
         const data = await res.json();
         if (data && !data.error) {
           lastSyncRef.current = data.savedAt;
+          setDistances(data.distances || {});
           setSaveStatus(`✓ saved ${new Date(data.savedAt).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`);
         } else {
           setSaveStatus("Cloud save error");
@@ -276,7 +290,8 @@ export default function Page() {
       defaults: JSON.parse(JSON.stringify(defaults)),
       fuelConfig: JSON.parse(JSON.stringify(fuelConfig)),
       crewRate,
-      showPrefs: JSON.parse(JSON.stringify(showPrefs))
+      showPrefs: JSON.parse(JSON.stringify(showPrefs)),
+      distances: JSON.parse(JSON.stringify(distances))
     };
     setUndoHistory(prev => [...prev.slice(-14), snapshot]); // keep up to 15 entries
   };
@@ -298,6 +313,7 @@ export default function Page() {
     setFuelConfig(prev.fuelConfig);
     setCrewRate(prev.crewRate);
     setShowPrefs(prev.showPrefs);
+    setDistances(prev.distances || {});
 
     setTimeout(() => {
       applyingRemoteRef.current = false;
