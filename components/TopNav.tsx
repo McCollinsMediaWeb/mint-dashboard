@@ -15,6 +15,17 @@ export default function TopNav({
   setupCount,
   saveStatus
 }: TopNavProps) {
+  const handleLogout = async () => {
+    if (confirm("Are you sure you want to log out of the platform?")) {
+      try {
+        await fetch("/api/auth/logout", { method: "POST" });
+        window.location.href = "/login";
+      } catch (err) {
+        console.error("Logout failed:", err);
+      }
+    }
+  };
+
   return (
     <div className="top-nav">
       <div className="nav-brand">
@@ -54,18 +65,39 @@ export default function TopNav({
           </span>
         </button>
       </div>
-      <span
-        id="save-badge"
-        style={{
-          marginLeft: "auto",
-          fontSize: "10px",
-          color: "var(--t3)",
-          fontFamily: "'JetBrains Mono', monospace",
-          paddingBottom: "14px"
-        }}
-      >
-        {saveStatus}
-      </span>
+      
+      <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "16px", paddingBottom: "14px" }}>
+        <span
+          id="save-badge"
+          style={{
+            fontSize: "10px",
+            color: "var(--t3)",
+            fontFamily: "'JetBrains Mono', monospace",
+          }}
+        >
+          {saveStatus}
+        </span>
+        <button
+          onClick={handleLogout}
+          style={{
+            background: "rgba(239, 68, 68, 0.1)",
+            border: "1px solid rgba(239, 68, 68, 0.2)",
+            color: "#f87171",
+            padding: "5px 10px",
+            borderRadius: "6px",
+            fontSize: "11px",
+            fontWeight: "600",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+            transition: "all 0.2s"
+          }}
+          className="logout-btn-nav"
+        >
+          <i className="ti ti-logout"></i> Logout
+        </button>
+      </div>
     </div>
   );
 }
