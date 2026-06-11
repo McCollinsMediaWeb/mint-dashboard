@@ -106,10 +106,62 @@ export default function Page() {
             isFirstLoad.current = false;
             setSaveStatus(`✓ saved ${new Date(data.savedAt || Date.now()).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`);
           }, 100);
+        } else {
+          console.error("API returned error:", data?.error || "Unknown error");
+          setSaveStatus("Database Connection Error");
+          
+          // Attempt local storage fallback
+          try {
+            const local = localStorage.getItem("mintops.save.v1");
+            if (local) {
+              const localData = JSON.parse(local);
+              applyingRemoteRef.current = true;
+              setJobs(localData.jobs || []);
+              setTeams(localData.teams || []);
+              setDrivers(localData.drivers || []);
+              setCrew(localData.crew || []);
+              setTrucks(localData.trucks || []);
+              setVenues(localData.venues || []);
+              setDefaults(localData.def || { del: 60, col: 30, buf: 30 });
+              setFuelConfig(localData.fuel || { dieselAED: 4.33, lPer100: 20 });
+              setCrewRate(localData.crewRate ?? 150);
+              setShowPrefs(localData.show || { orderNo: true, phone: true, venue: true, items: true, notes: true });
+              if (localData.selDate) setSelDate(localData.selDate);
+              setTimeout(() => {
+                applyingRemoteRef.current = false;
+              }, 100);
+            }
+          } catch (_) {}
+          
+          isFirstLoad.current = false;
         }
       } catch (err) {
         console.error("Failed to load initial state:", err);
         setSaveStatus("Offline - Using local state");
+        
+        // Attempt local storage fallback
+        try {
+          const local = localStorage.getItem("mintops.save.v1");
+          if (local) {
+            const localData = JSON.parse(local);
+            applyingRemoteRef.current = true;
+            setJobs(localData.jobs || []);
+            setTeams(localData.teams || []);
+            setDrivers(localData.drivers || []);
+            setCrew(localData.crew || []);
+            setTrucks(localData.trucks || []);
+            setVenues(localData.venues || []);
+            setDefaults(localData.def || { del: 60, col: 30, buf: 30 });
+            setFuelConfig(localData.fuel || { dieselAED: 4.33, lPer100: 20 });
+            setCrewRate(localData.crewRate ?? 150);
+            setShowPrefs(localData.show || { orderNo: true, phone: true, venue: true, items: true, notes: true });
+            if (localData.selDate) setSelDate(localData.selDate);
+            setTimeout(() => {
+              applyingRemoteRef.current = false;
+            }, 100);
+          }
+        } catch (_) {}
+        
         isFirstLoad.current = false;
       }
     };
